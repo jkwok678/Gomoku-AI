@@ -19,21 +19,25 @@ class Player(GomokuAgent):
         if (depth==0):
             return 0 #evaluation of position
         
+        # Max player moves
         if max== True:
             max_score=-1000000
             moves = genMaxMoves(board)
             for move in moves:
                 score = minimax2(move, depth-1, False)
+                #max score = to new max score if new number is higher
                 max_score = max(score, max_score)
             return max_score
+            #Min player moves
         else:
             min_score = 1000000
             moves = genMinMoves(board)
             for move in moves:
                 score = minimax2(move, depth-1, True)
+                #min score = to new min score if new number is lower
                 min_score = min(score, min_score)
             return min_score
-
+    # A method to generate moves for ourselves
     def genMaxMoves(board):
         moves =[]
         for row in range(self.BOARD_SIZE):
@@ -43,7 +47,7 @@ class Player(GomokuAgent):
                     new_move[row][single] = 1
                     moves.append(new_move)
         return moves
-
+    #A method to generate opponent moves
     def genMinMoves(board):
         moves =[]
         for row in range(self.BOARD_SIZE):
@@ -54,9 +58,6 @@ class Player(GomokuAgent):
                     moves.append(new_move)
         return moves
         
-
-
-
     def alphaBeta(self, board,curr_depth, max_depth, max_play, alpha,beta):
         if (curr_depth==max_depth):
             return 0 #evaluation of position
