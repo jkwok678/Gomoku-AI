@@ -57,15 +57,15 @@ class Player(GomokuAgent):
 
 
 
-    def alphaBeta(self, board, depth, max, alpha,beta):
-        if (depth==0):
+    def alphaBeta(self, board,curr_depth, max_depth, max_play, alpha,beta):
+        if (curr_depth==max_depth):
             return 0 #evaluation of position
         
-        if max== True:
+        if max_play== True:
             max_score=-1000000
             moves = genMaxMoves(board)
             for move in moves:
-                score = minimax2(move, depth-1, False, alpha, beta)
+                score = minimax2(move, curr_depth+1, max_depth, False, alpha, beta)
                 max_score = max(score, max_score)
                 alpha = max(alpha, score)
                 if (beta<= alpha)
@@ -75,7 +75,7 @@ class Player(GomokuAgent):
             min_score = 1000000
             moves = genMinMoves(board)
             for move in moves:
-                score = minimax2(move, depth-1, True, alpha, beta)
+                score = minimax2(move, curr_depth+1, max_depth, True, alpha, beta)
                 min_score = min(score, min_score)
                 beta = min(beta, score)
                 if beta <= alpha:
@@ -83,7 +83,7 @@ class Player(GomokuAgent):
             return min_score
 
 
-
+"""
 
     def minimax(self, target_depth, board):
         # first move at the centre
@@ -109,6 +109,7 @@ class Player(GomokuAgent):
 
             print("end")
             return(x_pos,x_pos)
+"""
 
     def generateNewMoves(board):
         moves =[]
@@ -123,7 +124,7 @@ class Player(GomokuAgent):
                     #new_move_score = yourFunction(board)
                     moves_score.append(new_move_score)
         return moves, moves_score
-
+"""
     def recursiveMiniMax(board, target_depth, currentDepth,parent):
         moves,moves_score = generateNewMoves(board)
         for move in moves:
@@ -136,22 +137,30 @@ class Player(GomokuAgent):
                         single=1
             if (currentDepth<target_depth):
                 recursiveMiniMax(new_board,target_depth,currentDepth, new_node)
-        
+ """       
 
 
     def move(self, board):
         print(board)
-        x_location, y_location = self.minimax(5,board)
-        self.moves+=1
-        return (x_location,y_location)
+        alpha = -1000000
+        beta = 1000000
+        score = alphaBeta(board,0, 5, True, alpha,beta)
+        moves = generateNewMoves(board)
+        x = 0
+        y = 0
+        for move in moves:
+            result = 0
+            #move = heuristic algorthim
+            if move == score:
+                for row in move:
+                    for single in row:
+                        if single==2:
+                            x= row
+                            y = single
 
-    
+        return (x,y)
 
-
-
-    #def calculate_score(self, board):
-
-
+"""
 class Node:
     self.parent
     self.children = []
@@ -164,6 +173,4 @@ class Node:
         self.state = state
         self.score = score
         self.depth = depth
-    
-
-
+"""
