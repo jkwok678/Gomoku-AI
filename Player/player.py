@@ -5,6 +5,7 @@ class GomokuAgent:
         self.ID = ID
         self.BOARD_SIZE = BOARD_SIZE
         self.X_IN_A_LINE = X_IN_A_LINE
+        self.first = True
 
     def move(self, board):
         return (0,0)
@@ -45,7 +46,10 @@ class Player(GomokuAgent):
             for single in range(self.BOARD_SIZE):
                 if (board[row][single] == 0):
                     new_move = np.copy(board)
-                    new_move[row][single] = 1
+                    if (self.first):
+                        new_move[row][single] = 1
+                    else:
+                        new_move[row][single] = -1
                     moves.append(new_move)
         return moves
     #A method to generate opponent moves
@@ -55,7 +59,10 @@ class Player(GomokuAgent):
             for single in range(self.BOARD_SIZE):
                 if (board[row][single] == 0):
                     new_move = np.copy(board)
-                    new_move[row][single] = -1
+                    if (self.first):
+                        new_move[row][single] = -1
+                    else:
+                        new_move[row][single] = 1
                     moves.append(new_move)
         return moves
         
@@ -102,6 +109,13 @@ class Player(GomokuAgent):
 
     def move(self, board):
         print(board)
+        counters = np.count_nonzero(board)
+        if(counters<2):
+            if (counters ==0):
+                self.first = True
+            else:
+                self.first = False
+
         alpha = -1000000
         beta = 1000000
         score,board_move = self.alphaBetaR(board,0, 3, True, alpha,beta)
