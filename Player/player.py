@@ -52,10 +52,15 @@ class Player(GomokuAgent):
     # A method to generate moves for ourselves
     def genMaxMoves(self,board, last_x_move, last_y_move):
          
-        last_x_box_1 = last_x_move-2
-        last_x_box_2 = last_x_move+2
-        last_y_box_1 = last_y_move-2
-        last_y_box_2 = last_y_move+2
+        last_x_box_1 = last_x_move - 2
+        last_x_box_2 = last_x_move + 2
+        last_y_box_1 = last_y_move - 2
+        last_y_box_2 = last_y_move + 2
+        if (self.turn>30):
+            last_x_box_1 = last_x_move - 3
+            last_x_box_2 = last_x_move + 3
+            last_y_box_1 = last_y_move - 3
+            last_y_box_2 = last_y_move + 3
         #Make sure the box doesn't go out of bounds
         if last_x_box_1 < 0:
            last_x_box_1 = 0
@@ -95,6 +100,11 @@ class Player(GomokuAgent):
         last_x_box_2 = last_x_move+2
         last_y_box_1 = last_y_move-2
         last_y_box_2 = last_y_move+2
+        if (self.turn>30):
+            last_x_box_1 = last_x_move - 3
+            last_x_box_2 = last_x_move + 3
+            last_y_box_1 = last_y_move - 3
+            last_y_box_2 = last_y_move + 3
         if last_x_box_1 < 0:
            last_x_box_1 = 0
         if last_x_box_2 > self.BOARD_SIZE:
@@ -189,6 +199,7 @@ class Player(GomokuAgent):
                     y = column
         self.turn+=1
         self.old_board = board_move
+        print(self.turn)
         return (x,y)
 
 
