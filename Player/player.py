@@ -56,7 +56,7 @@ class Player(GomokuAgent):
         last_x_box_2 = last_x_move + 2
         last_y_box_1 = last_y_move - 2
         last_y_box_2 = last_y_move + 2
-        if (self.turn>30):
+        if (self.turn>32):
             last_x_box_1 = last_x_move - 3
             last_x_box_2 = last_x_move + 3
             last_y_box_1 = last_y_move - 3
@@ -100,7 +100,7 @@ class Player(GomokuAgent):
         last_x_box_2 = last_x_move+2
         last_y_box_1 = last_y_move-2
         last_y_box_2 = last_y_move+2
-        if (self.turn>30):
+        if (self.turn>32):
             last_x_box_1 = last_x_move - 3
             last_x_box_2 = last_x_move + 3
             last_y_box_1 = last_y_move - 3
