@@ -1,5 +1,7 @@
 import numpy as np
 import math
+from sklearn.utils import shuffle
+
 class GomokuAgent:
     def __init__(self, ID, BOARD_SIZE, X_IN_A_LINE):
         self.ID = ID
@@ -84,7 +86,8 @@ class Player(GomokuAgent):
                         new_move[row][single] = -1
                     move_location.append((row, single))
                     moves.append(new_move)
-        return moves, move_location
+        moves_2, move_location_2 = shuffle(moves, move_location)
+        return moves_2, move_location_2
     #A method to generate opponent moves
     def genMinMoves(self,board, last_x_move, last_y_move):
         
@@ -112,7 +115,8 @@ class Player(GomokuAgent):
                         new_move[row][single] = 1
                     move_location.append((row, single))
                     moves.append(new_move)
-        return moves, move_location
+        moves_2, move_location_2 = shuffle(moves, move_location)
+        return moves_2, move_location_2
         
 
     def alphaBetaR(self, board,curr_depth, max_depth, max_play, alpha,beta, last_x_move, last_y_move):
@@ -177,7 +181,7 @@ class Player(GomokuAgent):
         beta = 1000000
         op_last_x = self.oponent_last_x_move
         op_last_y = self.oponent_last_y_move
-        score,board_move = self.alphaBetaR(board,0, 3, True, alpha,beta , op_last_x, op_last_y)
+        score,board_move = self.alphaBetaR(board,0, 4, True, alpha,beta , op_last_x, op_last_y)
         for row in range(self.BOARD_SIZE):
             for column in range(self.BOARD_SIZE):
                 if board_move[row][column]!=board[row][column]:
