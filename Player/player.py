@@ -54,14 +54,24 @@ class Player(GomokuAgent):
         last_x_box_2 = last_x_move+2
         last_y_box_1 = last_y_move-2
         last_y_box_2 = last_y_move+2
+        #Make sure the box doesn't go out of bounds
         if last_x_box_1 < 0:
            last_x_box_1 = 0
+           #Increase box size in other direction
+           last_x_box_2 = 6
         if last_x_box_2 > self.BOARD_SIZE:
            last_x_box_2 = self.BOARD_SIZE-1
+           #Increase box size in other direction
+           last_x_box_1 = 5
         if last_y_box_1 < 0:
            last_y_box_1 = 0
+           #Increase box size in other direction
+           last_y_box_2 = 6
         if last_y_box_2 > self.BOARD_SIZE:
            last_y_box_2 = self.BOARD_SIZE-1
+           #Increase box size in other direction
+           last_y_box_1 = 5
+
         moves =[]
         move_location =[]
         for row in range(last_y_box_1, last_y_box_2):
