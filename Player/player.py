@@ -5,7 +5,8 @@ class GomokuAgent:
         self.ID = ID
         self.BOARD_SIZE = BOARD_SIZE
         self.X_IN_A_LINE = X_IN_A_LINE
-        self.first = True
+        
+
 
     def move(self, board):
         return (0,0)
@@ -16,6 +17,13 @@ class Player(GomokuAgent):
         self.ID = ID
         self.BOARD_SIZE = BOARD_SIZE
         self.X_IN_A_LINE = X_IN_A_LINE
+        self.first = True
+        self.my_last_x_move = 0
+        self.my_last_y_move = 0
+        self.oponent_last_x_move = 0
+        self.oponent_last_y_move = 0
+        self.old_board = np.zeros((BOARD_SIZE,BOARD_SIZE), dtype=int)
+        self.turn = 0 
 
     def minimax2(self, depth, board, max):
         if (depth==0):
@@ -24,57 +32,89 @@ class Player(GomokuAgent):
         # Max player moves
         if max== True:
             max_score=-1000000
-            moves = genMaxMoves(board)
+            moves = self.genMaxMoves(board)
             for move in moves:
-                score = minimax2(move, depth-1, False)
+                score = self.minimax2(move, depth-1, False)
                 #max score = to new max score if new number is higher
                 max_score = max(score, max_score)
             return max_score
             #Min player moves
         else:
             min_score = 1000000
-            moves = genMinMoves(board)
+            moves = self.genMinMoves(board)
             for move in moves:
-                score = minimax2(move, depth-1, True)
+                score = self.minimax2(move, depth-1, True)
                 #min score = to new min score if new number is lower
                 min_score = min(score, min_score)
             return min_score
     # A method to generate moves for ourselves
-    def genMaxMoves(self,board):
+    def genMaxMoves(self,board, last_x_move, last_y_move):
+         
+        last_x_box_1 = last_x_move-2
+        last_x_box_2 = last_x_move+2
+        last_y_box_1 = last_y_move-2
+        last_y_box_2 = last_y_move+2
+        if last_x_box_1 < 0:
+           last_x_box_1 = 0
+        if last_x_box_2 > self.BOARD_SIZE:
+           last_x_box_2 = self.BOARD_SIZE-1
+        if last_y_box_1 < 0:
+           last_y_box_1 = 0
+        if last_y_box_2 > self.BOARD_SIZE:
+           last_y_box_2 = self.BOARD_SIZE-1
         moves =[]
-        for row in range(self.BOARD_SIZE):
-            for single in range(self.BOARD_SIZE):
+        move_location =[]
+        for row in range(last_y_box_1, last_y_box_2):
+            for single in range(last_x_box_1, last_x_box_2):
                 if (board[row][single] == 0):
                     new_move = np.copy(board)
                     if (self.first):
                         new_move[row][single] = 1
                     else:
                         new_move[row][single] = -1
+                    move_location.append((row, single))
                     moves.append(new_move)
-        return moves
+        return moves, move_location
     #A method to generate opponent moves
-    def genMinMoves(self,board):
+    def genMinMoves(self,board, last_x_move, last_y_move):
+        
+        last_x_box_1 = last_x_move-2
+        last_x_box_2 = last_x_move+2
+        last_y_box_1 = last_y_move-2
+        last_y_box_2 = last_y_move+2
+        if last_x_box_1 < 0:
+           last_x_box_1 = 0
+        if last_x_box_2 > self.BOARD_SIZE:
+           last_x_box_2 = self.BOARD_SIZE-1
+        if last_y_box_1 < 0:
+           last_y_box_1 = 0
+        if last_y_box_2 > self.BOARD_SIZE:
+           last_y_box_2 = self.BOARD_SIZE-1
         moves =[]
-        for row in range(self.BOARD_SIZE):
-            for single in range(self.BOARD_SIZE):
+        move_location =[]
+        for row in range(last_y_box_1, last_y_box_2):
+            for single in range(last_x_box_1, last_x_box_2):
                 if (board[row][single] == 0):
                     new_move = np.copy(board)
                     if (self.first):
                         new_move[row][single] = -1
                     else:
                         new_move[row][single] = 1
+                    move_location.append((row, single))
                     moves.append(new_move)
-        return moves
+        return moves, move_location
         
-    def alphaBetaR(self, board,curr_depth, max_depth, max_play, alpha,beta):
+
+    def alphaBetaR(self, board,curr_depth, max_depth, max_play, alpha,beta, last_x_move, last_y_move):
         if (curr_depth==max_depth):
             return self.totalScore2(board),board
         
         if max_play== True:
             max_score=-1000000
-            moves = self.genMaxMoves(board)
-            for move in moves:
-                score,board = self.alphaBetaR(move, curr_depth+1, max_depth, False, alpha, beta)
+            moves,move_location = self.genMaxMoves(board, self.oponent_last_x_move, self.oponent_last_y_move)
+            for index in range(len(moves)):
+                move_x,move_y = move_location[index]
+                score,board = self.alphaBetaR(moves[index], curr_depth+1, max_depth, False, alpha, beta, move_x, move_y)
                 max_score = max(score, max_score)
                 alpha = max(alpha, score)
                 if beta<= alpha:
@@ -82,9 +122,10 @@ class Player(GomokuAgent):
             return max_score,board
         else:
             min_score = 1000000
-            moves = self.genMinMoves(board)
-            for move in moves:
-                score,board = self.alphaBetaR(move, curr_depth+1, max_depth, True, alpha, beta)
+            moves, move_location = self.genMinMoves(board, self.oponent_last_x_move, self.oponent_last_y_move)
+            for index in range(len(moves)):
+                move_x,move_y = move_location[index]
+                score,board = self.alphaBetaR(moves[index], curr_depth+1, max_depth, True, alpha, beta, move_x, move_y)
                 min_score = min(score, min_score)
                 beta = min(beta, score)
                 if beta <= alpha:
@@ -109,6 +150,12 @@ class Player(GomokuAgent):
 
     def move(self, board):
         print(board)
+        for x in range(self.BOARD_SIZE):
+            for y in range(self.BOARD_SIZE):
+                if (self.old_board[x][y] != board[x][y]):
+                    self.oponent_last_x_move = x
+                    self.oponent_last_y_move = y
+        
         counters = np.count_nonzero(board)
         if(counters<2):
             if (counters ==0):
@@ -118,7 +165,9 @@ class Player(GomokuAgent):
 
         alpha = -1000000
         beta = 1000000
-        score,board_move = self.alphaBetaR(board,0, 3, True, alpha,beta)
+        op_last_x = self.oponent_last_x_move
+        op_last_y = self.oponent_last_y_move
+        score,board_move = self.alphaBetaR(board,0, 3, True, alpha,beta , op_last_x, op_last_y)
         for row in range(self.BOARD_SIZE):
             for column in range(self.BOARD_SIZE):
                 if board_move[row][column]!=board[row][column]:
@@ -141,6 +190,8 @@ class Player(GomokuAgent):
                             x = row
                             y = single
         """
+        self.turn+=1
+        self.old_board = board_move
         return (x,y)
 
     def totalScore(self, board):
